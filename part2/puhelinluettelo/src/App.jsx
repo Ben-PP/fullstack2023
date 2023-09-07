@@ -3,16 +3,28 @@ import personService from './services/persons'
 import Numbers from './components/Numbers'
 import AddPerson from './components/AddPerson'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(initialPersons => setPersons(initialPersons))
   },[])
+
+  const pushNotification = (message, className) => {
+    setNotification({
+      text: message,
+      className: className
+    })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -28,6 +40,7 @@ const App = () => {
       setPersons([...persons, returnedPerson])
       setNewName('')
       setNewNumber('')
+      pushNotification(`Added ${returnedPerson.name} to phonebook!`, 'successNotification')
     })
   }
 
@@ -40,17 +53,22 @@ const App = () => {
         setPersons(persons.map(person => person.name === name ? data : person))
         setNewName('')
         setNewNumber('')
-        //pushNotification(`Updated the number for ${name}`, 'success')
+        pushNotification(`Updated the number for ${name}`, 'successNotification')
       }).catch(() => {
-        //pushNotification(`${name} has already been removed from server`, 'error')
+        pushNotification(`${name} has already been removed from server`, 'errorNotification')
         setPersons(persons.filter(person => person.name !== name))
       })
   }
 
   const deletePerson = (id) => {
-    if (!window.confirm(`Do you want to delete ${persons.find(person => person.id === id).name}?`)) return
+    const person = persons.find(p => p.id === id)
+    if (!window.confirm(`Do you want to delete ${person.name}?`)) return
     personService.deletePerson(id)
     .then(() => {
+      pushNotification(`Removed ${person.name} from phonebook!`, 'successNotification')
+      setPersons(persons.filter(p => p.id !== id))
+    }).catch(() => {
+      pushNotification(`${person.name} has already been removed from server`, 'error')
       setPersons(persons.filter(person => person.id !== id))
     })
   }
@@ -69,6 +87,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification notification={notification} />
       <Filter value={newFilter} onChange={handleFilterChange} />
       <AddPerson
         addPerson={addPerson}
