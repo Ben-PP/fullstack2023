@@ -1,0 +1,8 @@
+POST http://localhost:3002/api/blogs
+Content-Type: application/json
+
+{
+  "author": "Karel Parkkola",
+  "title": "Hyvä kirja 1",
+  "url": "https://www.huone105.com"
+}
