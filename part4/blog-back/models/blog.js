@@ -1,11 +1,5 @@
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-  console.log('[INFO]: connected to MongoDB')
-}).catch(error => {
-  console.log('[ERROR]: error connecting to MongoDB', error.message)
-})
-
 // TODO Validate
 const blogSchema = mongoose.Schema({
   title: String,
