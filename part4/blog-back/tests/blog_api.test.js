@@ -27,37 +27,68 @@ describe('Blog API tests', () => {
     const response = await api.get('/api/blogs')
     expect(response.body[0].id).toBeDefined()
   })
-})
 
-describe('New blog can be added', () => {
-  test('blog can be added', async () => {
-    const newBlog = {
-      title: 'a new blog',
-      author: 'new author',
-      url: 'https://google.com'
-    }
-    await api.post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-    const response = await api.get('/api/blogs')
-    const titles = response.body.map(blog => blog.title)
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
-    expect(titles).toContain('a new blog')
+  describe('Viewing specific blog', () => {
+    test('succeeds with a valid id', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToView = blogsAtStart[0]
+
+      const result = await api.get(`/api/blogs/${blogToView.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+      expect(result.body).toEqual(blogToView)
+    })
+    test('fails with statuscode 404 if note does not exist', async () => {
+      const validNonexistingId = await helper.nonExistingId()
+      await api.get(`/api/blogs/${validNonexistingId}`)
+        .expect(404)
+    })
+    test('fails with statuscode 400 if id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+      await api
+        .get(`/api/blogs/${invalidId}`)
+        .expect(400)
+    })
   })
-  test('likes will be 0 if not given', async () => {
-    const newBlog = {
-      title: 'a new blog',
-      author: 'new author',
-      url: 'https://google.com'
-    }
-    // TODO check that likes is 0
-    await api.post('/api/blogs')
-      .send(newBlog)
-    const response = await api.get('/api/blogs')
-    const titles = response.body.map(blog => blog.title)
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
-    expect(titles).toContain('a new blog')
+
+  describe('Addition of new blog', () => {
+    test('succeed with valid data', async () => {
+      const newBlog = {
+        title: 'a new blog',
+        author: 'new author',
+        url: 'https://google.com'
+      }
+      await api.post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+      const response = await api.get('/api/blogs')
+      const titles = response.body.map(blog => blog.title)
+      expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+      expect(titles).toContain('a new blog')
+    })
+    test('likes will be 0 if not given', async () => {
+      const result = await api.post('/api/blogs')
+        .send(helper.newBlog)
+      const newBlog = result.body
+      expect(newBlog.likes).toBe(0)
+    })
+    test('fails with status code 400 if data invalid', async () => {
+      const badBlogNoTitle = {
+        author: 'Bad Guy',
+        url: 'https://google.com'
+      }
+      const badBlogNoUrl = {
+        title: 'I am a bad blog',
+        author: 'Bad Guy'
+      }
+      await api.post('/api/blogs')
+        .send(badBlogNoTitle)
+        .expect(400)
+      await api.post('/api/blogs')
+        .send(badBlogNoUrl)
+        .expect(400)
+    })
   })
 })
 
