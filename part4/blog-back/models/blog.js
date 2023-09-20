@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-// TODO Validate
 const blogSchema = mongoose.Schema({
   title: {
     type: String,
@@ -13,6 +12,10 @@ const blogSchema = mongoose.Schema({
   },
   likes: Number
 })
+
+blogSchema.statics.deleteById = (id) => {
+  return this.deleteOne({ _id: id })
+}
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {

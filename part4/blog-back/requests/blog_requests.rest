@@ -1,0 +1,29 @@
+### GET /api/blogs
+GET http://localhost:3002/api/blogs
+
+### GET /api/blogs/id
+GET http://localhost:3002/api/blogs/6508b2f41bf0c517222cb85f
+
+### POST /api/blogs
+POST http://localhost:3002/api/blogs
+Content-Type: application/json
+
+{
+  "author": "Karel",
+  "title": "Hyvä",
+  "url": "https://google.com"
+}
+
+### DELETE /api/blogs/id
+DELETE http://localhost:3002/api/blogs/650a834885f74502e0e4ff68
+
+### PUT /api/blogs/id
+PUT http://localhost:3002/api/blogs/650a93f1b478e2a44b9120a1
+Content-Type: application/json
+
+{
+  //"author": "Karel Parkkola",
+  //"title": "Hyvä kirja 1",
+  //"url": "https://google.com",
+  "likes": 5
+}

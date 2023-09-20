@@ -38,7 +38,7 @@ describe('Blog API tests', () => {
         .expect('Content-Type', /application\/json/)
       expect(result.body).toEqual(blogToView)
     })
-    test('fails with statuscode 404 if note does not exist', async () => {
+    test('fails with statuscode 404 if blog does not exist', async () => {
       const validNonexistingId = await helper.nonExistingId()
       await api.get(`/api/blogs/${validNonexistingId}`)
         .expect(404)
@@ -88,6 +88,41 @@ describe('Blog API tests', () => {
       await api.post('/api/blogs')
         .send(badBlogNoUrl)
         .expect(400)
+    })
+  })
+
+  describe('Deletion of a blog', () => {
+    // TODO Test for the number of blogs
+    test('succeeds with status 204', async () => {
+      const blogsInDb = await helper.blogsInDb()
+      const specificBlog = blogsInDb[0]
+      await api.delete(`/api/blogs/${specificBlog.id}`)
+        .expect(204)
+    })
+    test('fails with status code 400 if id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+      await api.delete(`/api/blogs/${invalidId}`)
+        .expect(400)
+    })
+  })
+
+  describe('Updating a blog', () => {
+    // TODO Tests for updating a blog
+    test('succeeds with status code 200 and likes to be updated', async () => {
+      const blogsInDb = await helper.blogsInDb()
+      const specificBlog = blogsInDb[0]
+      const blog = { likes: 5555 }
+      const result = await api.put(`/api/blogs/${specificBlog.id}`)
+        .send(blog)
+        .expect(200)
+      expect(result.body.likes).toBe(5555)
+    })
+    test('fails with status code 404 if blog is not found', async () => {
+      const nonExistingId = helper.nonExistingId()
+      const blog = { likes: 10 }
+      await api.put(`/api/blogs${nonExistingId}`)
+        .send(blog)
+        .expect(404)
     })
   })
 })
