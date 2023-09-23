@@ -9,13 +9,13 @@ POST http://localhost:3002/api/blogs
 Content-Type: application/json
 
 {
-  "author": "Karel",
-  "title": "Hyvä",
+  "author": "Jesus",
+  "title": "This is how I roll II",
   "url": "https://google.com"
 }
 
 ### DELETE /api/blogs/id
-DELETE http://localhost:3002/api/blogs/650a834885f74502e0e4ff68
+DELETE http://localhost:3002/api/blogs/650ec1ac2e0ba25a10ee6f14
 
 ### PUT /api/blogs/id
 PUT http://localhost:3002/api/blogs/650a93f1b478e2a44b9120a1
