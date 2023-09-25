@@ -7,10 +7,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await Blog.insertMany(helper.initialBlogs)
 })
 
 describe('Blog API tests', () => {
@@ -82,6 +79,7 @@ describe('Blog API tests', () => {
         title: 'I am a bad blog',
         author: 'Bad Guy'
       }
+      console.log('here')
       await api.post('/api/blogs')
         .send(badBlogNoTitle)
         .expect(400)

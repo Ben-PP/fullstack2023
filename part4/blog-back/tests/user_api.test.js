@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const supertest = require('supertest')
 const User = require('../models/user')
 const helper = require('./test_helper')
@@ -101,4 +102,8 @@ describe('User API tests', () => {
       expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
   })
+})
+
+afterAll(async () => {
+  await mongoose.connection.close()
 })

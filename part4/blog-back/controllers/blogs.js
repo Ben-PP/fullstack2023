@@ -1,6 +1,6 @@
+const { userExtractor } = require('../utils/middleware')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
@@ -17,15 +17,14 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
-  const users = await User.find({})
-  const user = users[0]
+  const user = request.user
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
-    user: user.id,
+    user: user._id,
     likes: 0,
   })
   const savedBlog = await blog.save()
@@ -34,13 +33,25 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+  const user = request.user
+  if (user._id.toString() !== blog.user.toString()) {
+    response.status(403).json({ error: 'forbidden' })
+    return
+  }
+  await blog.deleteOne()
   response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const body = request.body
+  const user = request.user
+  const oldBlog = await Blog.findById(request.params.id)
+  if (user._id.toString() !== oldBlog.user.toString()) {
+    response.status(403).json({ error: 'forbidden' })
+    return
+  }
   const blog = {
     author: body.author,
     title: body.title,
