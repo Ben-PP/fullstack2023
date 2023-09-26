@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -39,6 +40,30 @@ const initialBlogs = [
     likes: 5
   }
 ]
+const initialUserList = [
+  {
+    username: 'root',
+    name: 'Superuser',
+    password: 'root'
+  },
+  {
+    username: 'second',
+    name: 'Second User',
+    password: 'second'
+  }
+]
+
+const initialUsers = () => {
+  return initialUserList.map((user) => {
+    const passwordHash = bcrypt.hashSync(user.password, 10)
+    const newUser = {
+      ...user,
+      passwordHash: passwordHash
+    }
+    delete newUser.password
+    return newUser
+  })
+}
 
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'willremovethissoon', url: 'not a valid url' })
@@ -67,6 +92,7 @@ const usersInDb = async () => {
 module.exports = {
   initialBlogs,
   newBlog,
+  initialUsers,
   nonExistingId,
   blogsInDb,
   usersInDb

@@ -34,7 +34,6 @@ describe('User API tests', () => {
         .send(newUser)
         .expect(201)
         .expect('Content-Type', /application\/json/)
-
       const usersAtEnd = await helper.usersInDb()
       expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
