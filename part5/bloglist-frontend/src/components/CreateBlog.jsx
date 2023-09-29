@@ -1,23 +1,11 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
-import pushNotificationService from '../services/notifications'
 
-const CreateBlog = ({setNotification}) => {
+const CreateBlog = ({createBlog}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const createBlog = async (event) => {
-    event.preventDefault()
-
-    const response = await blogService.create({
-      title: title,
-      author: author,
-      url: url
-    })
-    pushNotificationService.success(`a new blog ${title} by ${author} added`, setNotification)
-    console.log(response)
-  }
+  
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value)
@@ -29,10 +17,18 @@ const CreateBlog = ({setNotification}) => {
     setUrl(event.target.value)
   }
 
+  const addBlog = async (event) => {
+    event.preventDefault()
+    await createBlog(title, author, url)
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   return (
     <div>
       <h2>Add a blog</h2>
-      <form onSubmit={createBlog}>
+      <form onSubmit={addBlog}>
         <div>
           title: <input
             value={title}
