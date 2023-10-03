@@ -1,5 +1,3 @@
-import Notification from "../components/Notification"
-
 const success = (message, setNotification) => {
   setNotification({
     text: message,

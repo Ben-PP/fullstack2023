@@ -18,8 +18,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      setBlogs(blogs)
-      console.log(blogs[0])
+      setBlogsSorted(blogs)
     }
     )
   }, [])
@@ -58,22 +57,54 @@ const App = () => {
     window.localStorage.removeItem('loggedUser')
   }
 
+  const setBlogsSorted = (newBlogs) => {
+    console.log(newBlogs)
+    setBlogs(newBlogs.sort((a, b) => b.likes - a.likes))
+  }
+
   const createBlog = async (title, author, url) => {
-    const response = await blogService.create({
+    const newBlog = await blogService.create({
       title: title,
       author: author,
       url: url
     })
-    setBlogs(blogs.concat({
-      ...response,
+    setBlogsSorted(blogs.concat({
+      ...newBlog,
       user: {
-        id: response.user,
+        id: newBlog.user,
         name: user.name,
         username: user.username
       }
     }))
     blogFormRef.current.toggleVisibility()
     pushNotificationService.success(`a new blog ${title} by ${author} added`, setPushMessage)
+  }
+
+  const updateLikes = async (blog) => {
+    const updatedBlog = await blogService.update(
+      blog.id,
+      {
+        ...blog,
+        likes: blog.likes + 1
+      }
+    )
+    setBlogsSorted(blogs.map(b => b.id !== blog.id ? b : {
+      ...updatedBlog,
+      user: {
+        id: blog.user,
+        name: blog.user.name,
+        username: blog.user.username
+      }
+    }))
+  }
+
+  const deleteBlog = async (id) => {
+    const blogToDelete = blogs.find(b => b.id === id)
+    if (!window.confirm(`Remove blog ${blogToDelete.title}`)) {
+      return
+    }
+    await blogService.deleteBlog(id)
+    setBlogs(blogs.filter(b => b.id !== id))
   }
 
   const loginView = () => {
@@ -102,7 +133,7 @@ const App = () => {
           <CreateBlog createBlog={createBlog} />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} username={user.username} updateLikes={updateLikes} deleteBlog={deleteBlog} />
         )}
       </div>
     )
