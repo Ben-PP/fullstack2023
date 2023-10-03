@@ -17,8 +17,10 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => {
       setBlogs(blogs)
+      console.log(blogs[0])
+    }
     )
   }, [])
 
@@ -62,9 +64,16 @@ const App = () => {
       author: author,
       url: url
     })
+    setBlogs(blogs.concat({
+      ...response,
+      user: {
+        id: response.user,
+        name: user.name,
+        username: user.username
+      }
+    }))
     blogFormRef.current.toggleVisibility()
     pushNotificationService.success(`a new blog ${title} by ${author} added`, setPushMessage)
-    console.log(response)
   }
 
   const loginView = () => {
