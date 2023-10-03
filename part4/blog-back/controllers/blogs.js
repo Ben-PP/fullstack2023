@@ -46,12 +46,6 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
 blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const body = request.body
-  const user = request.user
-  const oldBlog = await Blog.findById(request.params.id)
-  if (user._id.toString() !== oldBlog.user.toString()) {
-    response.status(403).json({ error: 'forbidden' })
-    return
-  }
   const blog = {
     author: body.author,
     title: body.title,
