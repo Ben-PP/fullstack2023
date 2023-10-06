@@ -15,8 +15,9 @@ const Blog = ({ blog, username, updateLikes, deleteBlog }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author} <button onClick={() => setShowBlog(!showBlog)}>{showBlog ? 'hide' : 'view'}</button>
+      {blog.title} <button onClick={() => setShowBlog(!showBlog)}>{showBlog ? 'hide' : 'view'}</button>
       <div style={{ display: showBlog ? '' : 'none' }}>
+        <p>{blog.author}</p>
         <p>{blog.url}</p>
         <p>
           likes {`${blog.likes} `}

@@ -34,18 +34,21 @@ const CreateBlog = ({ createBlog }) => {
           title: <input
             value={title}
             onChange={handleTitleChange}
+            placeholder='Title of the blog'
           />
         </div>
         <div>
           author: <input
             value={author}
             onChange={handleAuthorChange}
+            placeholder='Author of the blog'
           />
         </div>
         <div>
           url: <input
             value={url}
             onChange={handleUrlChange}
+            placeholder='Url for the blog'
           />
         </div>
         <div>
