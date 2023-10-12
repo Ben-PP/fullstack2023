@@ -14,7 +14,7 @@ const Blog = ({ blog, username, updateLikes, deleteBlog }) => {
   const [showBlog, setShowBlog] = useState(false)
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} <button onClick={() => setShowBlog(!showBlog)}>{showBlog ? 'hide' : 'view'}</button>
       <div style={{ display: showBlog ? '' : 'none' }}>
         <p>{blog.author}</p>
@@ -24,7 +24,7 @@ const Blog = ({ blog, username, updateLikes, deleteBlog }) => {
           <button onClick={() => updateLikes(blog)}>like</button>
         </p>
         <p>{blog.user.name}</p>
-        {username === blog.user.username ? <button onClick={() => deleteBlog(blog.id)}>remove</button> : null}
+        {username === blog.user.username ? <button className='removeButton' onClick={() => deleteBlog(blog.id)}>remove</button> : null}
       </div>
     </div>
   )
