@@ -26,6 +26,17 @@ export const vote = (id) => {
   }
 }
 
+export const createAnecdote = (content) => {
+  return {
+    type: 'NEW_ANECDOTE',
+    payload: {
+      content,
+      id: getId(),
+      votes: 0
+    }
+  }
+}
+
 const anecdoteReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'VOTE':
@@ -39,6 +50,8 @@ const anecdoteReducer = (state = initialState, action) => {
           return e
         }
       }))
+    case 'NEW_ANECDOTE':
+      return state.concat(action.payload)
     default: return state
   }
 }
