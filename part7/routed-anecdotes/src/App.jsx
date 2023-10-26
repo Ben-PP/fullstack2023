@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {
   Routes, Route, Link, useMatch, useNavigate,
 } from 'react-router-dom'
+import { useField } from './hooks'
 
 const Menu = () => {
   const padding = {
@@ -58,21 +59,26 @@ const Footer = () => (
 )
 
 const CreateNew = ({ addNew, setNotification }) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const { reset: contentReset, ...content } = useField('text')
+  const { reset: authorReset, ...author } = useField('text')
+  const { reset: infoReset, ...info } = useField('text')
   const navigate = useNavigate()
 
+  const handleReset = () => {
+    contentReset()
+    authorReset()
+    infoReset()
+  }
   const handleSubmit = (e) => {
     e.preventDefault()
     addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
     navigate('/')
-    setNotification(`a new anecdote ${content} created!`)
+    setNotification(`a new anecdote ${content.value} created!`)
     setTimeout(() => {
       setNotification(null)
     }, 5000)
@@ -84,17 +90,18 @@ const CreateNew = ({ addNew, setNotification }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input {...info} />
         </div>
-        <button>create</button>
+        <button type='submit'>create</button>
+        <button type='button' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
@@ -118,7 +125,7 @@ Anecdote.propTypes = {
   anecdote: PropTypes.object
 }
 
-const Notification = ({message}) => {
+const Notification = ({ message }) => {
   if (!message) return
   return (
     <div>
@@ -151,7 +158,7 @@ const App = () => {
   const [notification, setNotification] = useState('')
 
   const match = useMatch('/anecdotes/:id')
-  const anecdote = match 
+  const anecdote = match
     ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
     : null
 
@@ -164,7 +171,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <Notification message={notification}/>
+      <Notification message={notification} />
       <Routes>
         <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path='/create' element={<CreateNew addNew={addNew} setNotification={setNotification} />} />
