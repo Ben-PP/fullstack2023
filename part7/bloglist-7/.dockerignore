@@ -1,0 +1,7 @@
+/node_modules
+/requests
+/tests
+.env.example
+.env.test
+.gitignore
+mongo.js
