@@ -1,10 +1,22 @@
 import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
+import { useNotificationDispatch } from '../contexts/NotificationContext'
+import blogService from '../services/blogs'
 
-const CreateBlog = ({ createBlog }) => {
+const CreateBlog = ({ blogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const notificationDispatch = useNotificationDispatch()
+
+  const queryClient = useQueryClient()
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value)
@@ -18,7 +30,14 @@ const CreateBlog = ({ createBlog }) => {
 
   const addBlog = async (event) => {
     event.preventDefault()
-    await createBlog(title, author, url)
+    newBlogMutation.mutate({ title, author, url })
+    //await createBlog(title, author, url)
+    blogFormRef.current.toggleVisibility()
+    notificationDispatch({
+      type: 'setInfo',
+      payload: `a new blog ${title} by ${author} added`
+    })
+
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -66,7 +85,7 @@ const CreateBlog = ({ createBlog }) => {
 }
 
 CreateBlog.propTypes = {
-  createBlog: PropTypes.func.isRequired
+  blogFormRef: PropTypes.object.isRequired
 }
 
 export default CreateBlog
