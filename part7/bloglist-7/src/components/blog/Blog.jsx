@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
-import blogService from '../services/blogs'
+import blogService from '../../services/blogs'
+import { useUsers } from '../../contexts/UsersContext'
 
-const Blog = ({ blog, username }) => {
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,6 +13,7 @@ const Blog = ({ blog, username }) => {
     marginBottom: 5
   }
 
+  const users = useUsers()
   const [showBlog, setShowBlog] = useState(false)
   const queryClient = useQueryClient()
 
@@ -55,7 +57,7 @@ const Blog = ({ blog, username }) => {
           <button onClick={updateLikes}>like</button>
         </p>
         <p>{blog.user.name}</p>
-        {username === blog.user.username ? (
+        {users.current.username === blog.user.username ? (
           <button className='removeButton' onClick={() => deleteBlog(blog.id)}>
             remove
           </button>
@@ -65,8 +67,7 @@ const Blog = ({ blog, username }) => {
   )
 }
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  username: PropTypes.string.isRequired
+  blog: PropTypes.object.isRequired
 }
 
 export default Blog

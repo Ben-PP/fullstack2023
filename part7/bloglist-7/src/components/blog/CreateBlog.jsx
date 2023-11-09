@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
-import { useNotificationDispatch } from '../contexts/NotificationContext'
-import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../../contexts/NotificationContext'
+import blogService from '../../services/blogs'
 
 const CreateBlog = ({ blogFormRef }) => {
   const [title, setTitle] = useState('')
