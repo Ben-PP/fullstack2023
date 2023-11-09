@@ -5,6 +5,7 @@ import blogService from '../../services/blogs'
 import { useBlogs, useBlogsDispatch } from '../../contexts/BlogsContext'
 import { useUsers } from '../../contexts/UsersContext'
 import { useEffect, useState } from 'react'
+import Comments from './Comments'
 
 const BlogNew = () => {
   const blogs = useBlogs()
@@ -23,7 +24,9 @@ const BlogNew = () => {
     mutationFn: blogService.update,
     onSuccess: (data) => {
       const blogsQueryData = queryClient.getQueryData(['blogs'])
-      const newBlogs = blogsQueryData.map((b) => (b.id === data.id ? data : b))
+      const newBlogs = blogsQueryData.map((b) =>
+        b.id === data.id ? { ...b, likes: data.likes } : b
+      )
       queryClient.setQueryData(['blogs'], newBlogs)
       blogsDispatch({ type: 'setAll', payload: newBlogs })
     }
@@ -61,6 +64,7 @@ const BlogNew = () => {
           remove
         </button>
       ) : null}
+      <Comments comments={blog.comments ?? []} blogId={blog.id} />
     </>
   )
 }
