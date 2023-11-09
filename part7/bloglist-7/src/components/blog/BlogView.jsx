@@ -1,8 +1,8 @@
 import { useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import Togglable from '../common/Togglable'
 import CreateBlog from './CreateBlog'
-import Blog from './Blog'
 import { useBlogs, useBlogsDispatch } from '../../contexts/BlogsContext'
 import blogService from '../../services/blogs'
 
@@ -29,12 +29,24 @@ const BlogView = () => {
         <CreateBlog blogFormRef={blogFormRef} />
       </Togglable>
       {blogs !== null ? (
-        blogs.map((blog) => <Blog key={blog.id} blog={blog} />)
+        blogs.map((blog) => {
+          return (
+            <div key={blog.id} style={style}>
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            </div>
+          )
+        })
       ) : (
         <p>Loading...</p>
       )}
     </div>
   )
+}
+
+const style = {
+  padding: 5,
+  margin: 5,
+  border: 'solid'
 }
 
 export default BlogView

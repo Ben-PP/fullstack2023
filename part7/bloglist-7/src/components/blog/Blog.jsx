@@ -1,73 +1,68 @@
-import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import PropTypes from 'prop-types'
+
 import blogService from '../../services/blogs'
+import { useBlogs, useBlogsDispatch } from '../../contexts/BlogsContext'
 import { useUsers } from '../../contexts/UsersContext'
+import { useEffect, useState } from 'react'
 
-const Blog = ({ blog }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
+const BlogNew = () => {
+  const blogs = useBlogs()
   const users = useUsers()
-  const [showBlog, setShowBlog] = useState(false)
+  const id = useParams().id
+  const [blog, setBlog] = useState()
   const queryClient = useQueryClient()
+  const blogsDispatch = useBlogsDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setBlog(blogs.find((b) => b.id === id))
+  }, [blogs, id])
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.update,
     onSuccess: (data) => {
-      const blogs = queryClient.getQueryData(['blogs'])
-      queryClient.setQueryData(
-        ['blogs'],
-        blogs.map((b) => (b.id === data.id ? data : b))
-      )
+      const blogsQueryData = queryClient.getQueryData(['blogs'])
+      const newBlogs = blogsQueryData.map((b) => (b.id === data.id ? data : b))
+      queryClient.setQueryData(['blogs'], newBlogs)
+      blogsDispatch({ type: 'setAll', payload: newBlogs })
     }
   })
 
   const deleteBlogMutation = useMutation({
-    mutationFn: blogService.deleteBlog,
+    mutationFn: () => blogService.deleteBlog(id),
     onSuccess: (data) => {
       queryClient.invalidateQueries(['blogs'])
     }
   })
 
+  if (!blog) return null
+
   const updateLikes = () => {
     likeBlogMutation.mutate({ ...blog, likes: blog.likes + 1 })
   }
 
-  const deleteBlog = (id) => {
-    deleteBlogMutation.mutate(id)
+  const deleteBlog = () => {
+    deleteBlogMutation.mutate()
+    navigate('/')
   }
 
   return (
-    <div className='blog' style={blogStyle}>
-      {blog.title}{' '}
-      <button onClick={() => setShowBlog(!showBlog)}>
-        {showBlog ? 'hide' : 'view'}
-      </button>
-      <div style={{ display: showBlog ? '' : 'none' }}>
-        <p>{blog.author}</p>
-        <p>{blog.url}</p>
-        <p>
-          likes {`${blog.likes} `}
-          <button onClick={updateLikes}>like</button>
-        </p>
-        <p>{blog.user.name}</p>
-        {users.current.username === blog.user.username ? (
-          <button className='removeButton' onClick={() => deleteBlog(blog.id)}>
-            remove
-          </button>
-        ) : null}
-      </div>
-    </div>
+    <>
+      <h2>{blog.title}</h2>
+      <a href={blog.url} target='blank'>
+        {blog.url}
+      </a>
+      <p>
+        {blog.likes} likes <button onClick={updateLikes}>like</button>
+      </p>
+      {users.current.username === blog.user.username ? (
+        <button className='removeButton' onClick={() => deleteBlog(blog.id)}>
+          remove
+        </button>
+      ) : null}
+    </>
   )
 }
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired
-}
 
-export default Blog
+export default BlogNew

@@ -2,18 +2,24 @@ import { Link } from 'react-router-dom'
 import UserHeader from '../user/UserHeader'
 
 const Navbar = () => {
-  const style = {
+  const styleItem = {
     padding: 5
   }
+  const styleDiv = {
+    width: '100%',
+    backgroundColor: 'gray',
+    padding: 10
+  }
+
   return (
-    <div>
-      <Link style={style} to='/'>
+    <div style={styleDiv}>
+      <Link style={styleItem} to='/'>
         Blogs
       </Link>
-      <Link style={style} to='/users'>
+      <Link style={styleItem} to='/users'>
         Users
       </Link>
-      <UserHeader style={style} />
+      <UserHeader style={styleItem} />
     </div>
   )
 }

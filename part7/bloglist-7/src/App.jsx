@@ -6,6 +6,9 @@ import BlogView from './components/blog/BlogView'
 import { useUsers, useUsersDispatch } from './contexts/UsersContext'
 import UsersView from './components/user/UsersView'
 import Navbar from './components/common/Navbar'
+import User from './components/user/User'
+import BlogNew from './components/blog/Blog'
+import blogService from './services/blogs'
 
 const App = () => {
   const users = useUsers()
@@ -18,6 +21,7 @@ const App = () => {
         type: 'setUser',
         payload: localUser
       })
+      blogService.setToken(localUser.token)
     }
   }, [userDispatch])
 
@@ -31,6 +35,8 @@ const App = () => {
             <Routes>
               <Route path='/' element={<BlogView />} />
               <Route path='/users' element={<UsersView />} />
+              <Route path='/users/:id' element={<User />} />
+              <Route path='/blogs/:id' element={<BlogNew />} />
             </Routes>
           </div>
         </div>
