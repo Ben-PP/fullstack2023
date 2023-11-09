@@ -21,13 +21,16 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/:id/comments', async (request, response) => {
-  const body = request.body
+  const comment = {
+    content: request.body.comment,
+    id: Date.now()
+  }
   const oldBlog = await Blog.findById(request.params.id)
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     oldBlog.id,
     {
-      comments: oldBlog.comments.concat(body.comment)
+      comments: oldBlog.comments.concat(comment)
     },
     {
       new: true

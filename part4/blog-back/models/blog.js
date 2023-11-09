@@ -17,7 +17,15 @@ const blogSchema = mongoose.Schema({
   },
   comments: [
     {
-      type: String
+      type: Object,
+      validate: {
+        validator: (v) => {
+          if (v.content === null || v.id === null) {
+            return false
+          }
+          return true
+        }
+      }
     }
   ]
 })
