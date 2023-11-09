@@ -3,8 +3,11 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-    .populate('user', { username: 1, name: 1, id: 1 })
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1,
+    id: 1
+  })
   response.json(blogs)
 })
 
@@ -17,6 +20,22 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const body = request.body
+  const oldBlog = await Blog.findById(request.params.id)
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    oldBlog.id,
+    {
+      comments: oldBlog.comments.concat(body.comment)
+    },
+    {
+      new: true
+    }
+  )
+  response.json(updatedBlog)
+})
+
 blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
@@ -26,6 +45,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     url: body.url,
     user: user._id,
     likes: 0,
+    comments: []
   })
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
@@ -52,8 +72,9 @@ blogsRouter.put('/:id', async (request, response) => {
     url: body.url,
     likes: body.likes
   }
-  const updatedBlog = await Blog
-    .findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+    new: true
+  })
   response.json(updatedBlog)
 })
 

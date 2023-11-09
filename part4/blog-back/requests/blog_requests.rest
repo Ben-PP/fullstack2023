@@ -31,3 +31,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc
   //"url": "https://google.com",
   "likes": 5
 }
+### POST /api/blogs/id/comments
+POST http://localhost:3002/api/blogs/65488fdcb34d33984759761d/comments
+Content-Type: application/json
+
+{
+  "comment": "test"
+}
