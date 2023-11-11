@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
 import { useNotificationDispatch } from '../../contexts/NotificationContext'
 import blogService from '../../services/blogs'
+import Button from '../common/Button'
 
 const CreateBlog = ({ blogFormRef }) => {
   const [title, setTitle] = useState('')
@@ -42,42 +43,61 @@ const CreateBlog = ({ blogFormRef }) => {
     setAuthor('')
     setUrl('')
   }
-
+  const fieldStyle = `
+    mt-2 p-1 border rounded focus:border-green-600 focus:outline-none
+  `
+  const fieldTitleStyle = `text-right pr-2`
   return (
     <div>
-      <h2>Add a blog</h2>
+      <h2 className='text-h2'>Add a blog</h2>
       <form onSubmit={addBlog}>
-        <div>
-          title:{' '}
-          <input
-            id='title'
-            value={title}
-            onChange={handleTitleChange}
-            placeholder='Title of the blog'
+        <table>
+          <tbody>
+            <tr>
+              <td className={fieldTitleStyle}>title</td>
+              <td>
+                <input
+                  id='title'
+                  className={fieldStyle}
+                  value={title}
+                  onChange={handleTitleChange}
+                  placeholder='Title of the blog'
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className={fieldTitleStyle}>author</td>
+              <td>
+                <input
+                  id='author'
+                  className={fieldStyle}
+                  value={author}
+                  onChange={handleAuthorChange}
+                  placeholder='Author of the blog'
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className={fieldTitleStyle}>url</td>
+              <td>
+                <input
+                  id='url'
+                  className={fieldStyle}
+                  value={url}
+                  onChange={handleUrlChange}
+                  placeholder='Url for the blog'
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className='pb-2 pt-2'>
+          <Button
+            id='submit'
+            type='submit'
+            text='add'
+            className={'bg-green-700'}
           />
-        </div>
-        <div>
-          author:{' '}
-          <input
-            id='author'
-            value={author}
-            onChange={handleAuthorChange}
-            placeholder='Author of the blog'
-          />
-        </div>
-        <div>
-          url:{' '}
-          <input
-            id='url'
-            value={url}
-            onChange={handleUrlChange}
-            placeholder='Url for the blog'
-          />
-        </div>
-        <div>
-          <button id='submit' type='submit'>
-            add
-          </button>
         </div>
       </form>
     </div>

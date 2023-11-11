@@ -11,15 +11,32 @@ const Navbar = () => {
     padding: 10
   }
 
+  const tailwind = `
+    text-white
+  `
+
   return (
-    <div style={styleDiv}>
-      <Link style={styleItem} to='/'>
-        Blogs
-      </Link>
-      <Link style={styleItem} to='/users'>
-        Users
-      </Link>
-      <UserHeader style={styleItem} />
+    <div className='bg-green-500 p-2 text-lg sticky top-0 w-full'>
+      <table style={{ width: '100%' }}>
+        <tbody>
+          <tr>
+            <td className='text-center'>
+              <Link className={tailwind} to='/'>
+                Blogs
+              </Link>
+            </td>
+            <td className='h-full bg-white w-0.5'></td>
+            <td className='text-center'>
+              <Link className={tailwind} to='/users'>
+                Users
+              </Link>
+            </td>
+            <td className='text-right'>
+              <UserHeader />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useUsers, useUsersDispatch } from '../../contexts/UsersContext'
+import Button from '../common/Button'
 
-const UserHeader = ({ style }) => {
+const UserHeader = ({ className }) => {
   const users = useUsers()
   const userDispatch = useUsersDispatch()
 
@@ -10,11 +11,9 @@ const UserHeader = ({ style }) => {
   }
 
   return (
-    <div style={{ ...style, float: 'right' }}>
-      {users.current.name} logged in
-      <button style={{ marginLeft: 5 }} onClick={handleLogout}>
-        logout
-      </button>
+    <div>
+      {users.current.name}
+      <Button className={'ml-2'} text='Logout' onClick={handleLogout} />
     </div>
   )
 }

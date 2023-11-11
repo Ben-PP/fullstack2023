@@ -25,25 +25,21 @@ const App = () => {
     }
   }, [userDispatch])
 
-  return (
+  return users.current ? (
     <>
-      {users.current ? (
-        <div>
-          <Navbar />
-          <Notification />
-          <div>
-            <Routes>
-              <Route path='/' element={<BlogView />} />
-              <Route path='/users' element={<UsersView />} />
-              <Route path='/users/:id' element={<User />} />
-              <Route path='/blogs/:id' element={<BlogNew />} />
-            </Routes>
-          </div>
-        </div>
-      ) : (
-        <LoginView />
-      )}
+      <Navbar />
+      <div className='p-2'>
+        <Notification />
+        <Routes>
+          <Route path='/' element={<BlogView />} />
+          <Route path='/users' element={<UsersView />} />
+          <Route path='/users/:id' element={<User />} />
+          <Route path='/blogs/:id' element={<BlogNew />} />
+        </Routes>
+      </div>
     </>
+  ) : (
+    <LoginView />
   )
 }
 

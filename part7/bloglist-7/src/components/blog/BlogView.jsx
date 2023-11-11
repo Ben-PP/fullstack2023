@@ -24,14 +24,15 @@ const BlogView = () => {
   }
   return (
     <div>
-      <h2>Blogs</h2>
+      <h2 className='text-h1'>Blogs</h2>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <CreateBlog blogFormRef={blogFormRef} />
       </Togglable>
+
       {blogs !== null ? (
         blogs.map((blog) => {
           return (
-            <div key={blog.id} style={style}>
+            <div key={blog.id} className='border-2 p-1 mt-2 rounded'>
               <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
             </div>
           )
