@@ -22,15 +22,15 @@ const UsersView = () => {
 
   return (
     <div>
-      <h2>Users</h2>
+      <h2 className='text-h1'>Users</h2>
       <table>
-        <thead>
+        <thead className='text-center'>
           <tr>
             <th>Name</th>
             <th>Blogs created</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className='text-center'>
           {users.map((user) => {
             return (
               <tr key={user.id}>
