@@ -1,5 +1,15 @@
+import { useQuery } from '@apollo/client'
+import { ALL_AUTHORS } from '../queries'
+import SetBirthyear from './SetBirthyear'
+import { useEffect, useState } from 'react'
+
 const Authors = () => {
-  const authors = []
+  const [authors, setAuthors] = useState([])
+  const result = useQuery(ALL_AUTHORS)
+
+  useEffect(() => {
+    if (!result.loading) setAuthors(result.data.allAuthors)
+  }, [result])
 
   return (
     <div>
@@ -20,6 +30,7 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
+      {authors.length > 0 ? <SetBirthyear authors={authors} /> : null}
     </div>
   )
 }
