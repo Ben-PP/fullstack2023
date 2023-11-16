@@ -1,6 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
+const config = require('./utils/config')
 
 let authors = [
   {
@@ -90,7 +91,7 @@ const typeDefs = `
   type Book {
     title: String!
     published: Int!
-    author: String!
+    author: Author!
     genres: [String!]!
     id: ID!
   }
@@ -167,7 +168,7 @@ const server = new ApolloServer({
 })
 
 startStandaloneServer(server, {
-  listen: { port: 4000 }
+  listen: { port: config.PORT }
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })
