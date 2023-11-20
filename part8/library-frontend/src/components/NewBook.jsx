@@ -16,7 +16,7 @@ const NewBook = () => {
     event.preventDefault()
 
     const publishedInt = parseInt(published)
-    createBook({
+    await createBook({
       variables: { title, author, published: publishedInt, genres }
     })
 

@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
+import { PropTypes } from 'prop-types'
 import SetBirthyear from './SetBirthyear'
 import { useEffect, useState } from 'react'
 
-const Authors = () => {
+const Authors = ({ token }) => {
   const [authors, setAuthors] = useState([])
   const result = useQuery(ALL_AUTHORS)
 
@@ -30,9 +31,12 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
-      {authors.length > 0 ? <SetBirthyear authors={authors} /> : null}
+      {authors.length > 0 && token ? <SetBirthyear authors={authors} /> : null}
     </div>
   )
+}
+Authors.propTypes = {
+  token: PropTypes.string
 }
 
 export default Authors
