@@ -1,31 +1,41 @@
+const { PubSub } = require('graphql-subscriptions')
 const Book = require('../models/book')
 const Author = require('../models/author')
 const { GraphQLError } = require('graphql')
 const { validateUser } = require('../utils/validation')
 
+const pubsub = new PubSub()
 const typeDefs = `
-extend type Query {
-  bookCount: Int!
-  allBooks(author: String, genre: String): [Book!]!
-}
-extend type Mutation {
-  addBook(
+  extend type Query {
+    bookCount: Int!
+    allBooks(author: String, genre: String): [Book!]!
+  }
+  extend type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+  }
+  extend type Subscription {
+    bookAdded: Book!
+  }
+  type Book {
     title: String!
     published: Int!
-    author: String!
+    author: Author!
     genres: [String!]!
-  ): Book
-}
-type Book {
-  title: String!
-  published: Int!
-  author: Author!
-  genres: [String!]!
-  id: ID!
-}
+    id: ID!
+  }
 `
 
 const resolvers = {
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
+    }
+  },
   Query: {
     bookCount: async () => await Book.find({}).countDocuments(),
     allBooks: async (root, args) => {
@@ -67,6 +77,7 @@ const resolvers = {
           }
         })
       }
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
       return book
     }
   },

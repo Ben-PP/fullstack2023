@@ -1,3 +1,5 @@
+const { GraphQLError } = require('graphql')
+
 const validateUser = (user) => {
   if (!user) {
     throw new GraphQLError('not authenticated', {

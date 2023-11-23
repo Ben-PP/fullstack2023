@@ -11,6 +11,8 @@ const config = require('./utils/config')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 const schema = require('./schema/schema')
+const { WebSocketServer } = require('ws')
+const { useServer } = require('graphql-ws/lib/use/ws')
 
 mongoose.set('strictQuery', false)
 mongoose
@@ -25,9 +27,27 @@ mongoose
 const start = async () => {
   const app = express()
   const httpServer = http.createServer(app)
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/'
+  })
+  const serverCleanup = useServer({ schema }, wsServer)
+
   const server = new ApolloServer({
     schema: schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup()
+            }
+          }
+        }
+      }
+    ]
   })
   await server.start()
   app.use(
